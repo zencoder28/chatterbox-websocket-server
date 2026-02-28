@@ -3,13 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 import json
 
 app = FastAPI()
-
-# Store active connections
 connections = {}
-
-
-# ---------------- LOGIN PAGE ----------------
-
 @app.get("/", response_class=HTMLResponse)
 async def login_page():
     return """
@@ -74,10 +68,6 @@ async def login_page():
     </body>
     </html>
     """
-
-
-# ---------------- CHAT PAGE ----------------
-
 @app.get("/chat", response_class=HTMLResponse)
 async def chat_page(username: str):
     return f"""
@@ -219,16 +209,10 @@ async def chat_page(username: str):
     </body>
     </html>
     """
-
-
-# ---------------- WEBSOCKET ----------------
-
 @app.websocket("/ws/{username}")
 async def websocket_endpoint(websocket: WebSocket, username: str):
     await websocket.accept()
     connections[websocket] = username
-
-    # Notify everyone
     for connection in connections:
         await connection.send_text(json.dumps({
             "type": "system",
